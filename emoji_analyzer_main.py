@@ -6,12 +6,14 @@ import time
 import json
 import emoji
 
+logs = open("logs.txt", "r") 
+
 
 #consumer key, consumer secret, access token, access secret.
-ckey="XXXX"
-csecret="XXXX"
-atoken="XXXX"
-asecret="XXXX"
+ckey=logs.readline()[:-1]
+csecret=logs.readline()[:-1]
+atoken=logs.readline()[:-1]
+asecret=logs.readline()
 
 #Authentification and connexion to the twitter API
 class listener(StreamListener):
@@ -33,15 +35,15 @@ auth.set_access_token(atoken, asecret)
 #tweets = api.search(q="place:%s" % france, lang="fr", count=100, tweet_mode="extended")
 
 # Curso Mode
-api = tweepy.API(auth, wait_on_rate_limit=True)
+api = tweepy.API(auth, wait_on_rate_limit=True) 
 #Geo code
 france = 'f3bfc7dcc928977f'
 
 #Topic
-query = "#Malcom"
+query = "#giroud"
 dicCountryEmoji = {}
 page_count=0
-for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-07-18", count=100,tweet_mode="extended").pages():
+for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-07-18", count=100,tweet_mode="extended").pages(15):
     page_count+=1
     for tweet in page : 
         allchars = [str for str in tweet.full_text]
@@ -55,7 +57,7 @@ for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-07-18", co
 print("The most used emoji in tweets for", query,"is :",max(dicCountryEmoji, key=dicCountryEmoji.get))
 
 ###### Tendances by country ######
-# trends = api.trends_place("610264")
-# for i in range(0,len(trends[0]['trends'])) :
-#     print(trends[0]['trends'][i]['name'])
-#     #print("\n")
+trends = api.trends_place("610264")
+for i in range(0,len(trends[0]['trends'])) :
+    print(trends[0]['trends'][i]['name'])
+    print("\n")
