@@ -7,6 +7,8 @@ import json
 import emoji
 
 logs = open("logs.txt", "r") 
+print ()
+
 
 
 #consumer key, consumer secret, access token, access secret.
@@ -43,7 +45,7 @@ france = 'f3bfc7dcc928977f'
 query = "#giroud"
 dicCountryEmoji = {}
 page_count=0
-for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-07-18", count=100,tweet_mode="extended").pages(15):
+for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-09-01", count=100,tweet_mode="extended").pages():
     page_count+=1
     for tweet in page : 
         allchars = [str for str in tweet.full_text]
@@ -57,7 +59,7 @@ for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-07-18", co
 print("The most used emoji in tweets for", query,"is :",max(dicCountryEmoji, key=dicCountryEmoji.get))
 
 ###### Tendances by country ######
-trends = api.trends_place("610264")
-for i in range(0,len(trends[0]['trends'])) :
-    print(trends[0]['trends'][i]['name'])
-    print("\n")
+#trends = api.trends_place("610264")
+#for i in range(0,len(trends[0]['trends'])) :
+#    print(trends[0]['trends'][i]['name'])
+#    print("\n")
