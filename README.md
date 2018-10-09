@@ -6,3 +6,6 @@
 >"pip install emoji"
 * Tweepy
 >"pip install tweepy
+* MySQL DB Access
+>"pip install PyMySQL
+
