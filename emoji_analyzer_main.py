@@ -1,15 +1,13 @@
 from tweepy import Stream
 from tweepy import OAuthHandler
-import tweepy
 from tweepy.streaming import StreamListener
+import tweepy
 import time
 import json
 import emoji
+import datetime
 
 logs = open("logs.txt", "r") 
-print ()
-
-
 
 #consumer key, consumer secret, access token, access secret.
 ckey=logs.readline()[:-1]
@@ -28,38 +26,51 @@ class listener(StreamListener):
     def on_error(self, status):
         print(status)
 
+#Process_tweets
+def process_tweets(keyword, date):
+    dicCountryEmoji = {}
+    page_count=0
+    for page in tweepy.Cursor(api.search, q=keyword, lang="fr", since=date, count=100,tweet_mode="extended").pages():
+        page_count+=1
+        for tweet in page : 
+            allchars = [str for str in tweet.full_text]
+            for c in allchars :
+                if c in emoji.UNICODE_EMOJI and c not in dicCountryEmoji : 
+                    dicCountryEmoji[c]=1
+                elif c in emoji.UNICODE_EMOJI : 
+                    dicCountryEmoji[c]+=1
+        if page_count >= 100:
+            break
+    print("The most used emoji in tweets for", keyword,"is :",max(dicCountryEmoji, key=dicCountryEmoji.get))
+    print("Number of pages prosseced : ", page_count)
+
+###### Tendances by country ######
+def retrieve_trend(location, date, numberOfTrend):
+    trends = api.trends_place("610264")
+    counter = 0
+    for i in range(0,len(trends[0]['trends'])) :
+        counter+=1
+        trend = trends[0]['trends'][i]['name']
+        print("Search emojis for the trend : " + trend + "\n")
+        process_tweets(trend, date)
+        print("\n")
+        if(counter == numberOfTrend):
+            return
+
+#Connection
 auth = OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
 
-# Stream Mode
-# twitterStream = Stream(auth, listener())
-# twitterStream.filter(track=["Equipe de France"])
-#tweets = api.search(q="place:%s" % france, lang="fr", count=100, tweet_mode="extended")
-
 # Curso Mode
 api = tweepy.API(auth, wait_on_rate_limit=True) 
-#Geo code
-france = 'f3bfc7dcc928977f'
 
-#Topic
-query = "#giroud"
-dicCountryEmoji = {}
-page_count=0
-for page in tweepy.Cursor(api.search, q=query, lang="fr", since="2018-09-01", count=100,tweet_mode="extended").pages():
-    page_count+=1
-    for tweet in page : 
-        allchars = [str for str in tweet.full_text]
-        for c in allchars :
-            if c in emoji.UNICODE_EMOJI and c not in dicCountryEmoji : 
-                dicCountryEmoji[c]=1
-            elif c in emoji.UNICODE_EMOJI : 
-                dicCountryEmoji[c]+=1
-    if page_count >= 100:
-        break
-print("The most used emoji in tweets for", query,"is :",max(dicCountryEmoji, key=dicCountryEmoji.get))
+#WOEID
+FRANCE = "23424819"
 
-###### Tendances by country ######
-#trends = api.trends_place("610264")
-#for i in range(0,len(trends[0]['trends'])) :
-#    print(trends[0]['trends'][i]['name'])
-#    print("\n")
+#Process
+now = datetime.datetime.now()
+todayDate = now.strftime("%Y-%m-%d")
+start_time = time.time()
+retrieve_trend(FRANCE, todayDate, 8)
+scriptDuration = time.time() - start_time
+print(scriptDuration)
