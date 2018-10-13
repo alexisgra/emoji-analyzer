@@ -1,3 +1,10 @@
+##############################################
+## Authors: Dorian HENAULT and Alexis SEGURA##
+## Email: alex.segura06@gmail.com ############
+## Status: In development #################### 
+## Version: 0.1 ##############################
+##############################################
+
 from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
