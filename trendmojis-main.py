@@ -16,13 +16,12 @@ import datetime
 
 logs = open("logs.txt", "r") 
 
-#consumer key, consumer secret, access token, access secret.
 ckey=logs.readline()[:-1]
 csecret=logs.readline()[:-1]
 atoken=logs.readline()[:-1]
 asecret=logs.readline()
 
-#Authentification and connexion to the twitter API
+###### Authentification and connexion to the twitter API ######
 class listener(StreamListener):
     def on_data(self, data):
         jsonTweet = json.loads(data)
@@ -33,7 +32,7 @@ class listener(StreamListener):
     def on_error(self, status):
         print(status)
 
-#Process_tweets
+###### Process tweets for a given keyword ######
 def process_tweets(keyword, date):
     dicCountryEmoji = {}
     page_count=0
@@ -48,21 +47,35 @@ def process_tweets(keyword, date):
                     dicCountryEmoji[c]+=1
         if page_count >= 100:
             break
-    print("The most used emoji in tweets for", keyword,"is :",max(dicCountryEmoji, key=dicCountryEmoji.get))
+    emoj = max(dicCountryEmoji, key=dicCountryEmoji.get)
+    print("The most used emoji in tweets for", keyword,"is :",emoj)
     print("Number of pages prosseced : ", page_count)
+    return emoj
 
-###### Tendances by country ######
-def retrieve_trend(location, date, numberOfTrend):
+###### Trends by country ######
+def retrieve_trend(location, todayDate, numberOfTrend):
     trends = api.trends_place("610264")
     counter = 0
+    trendDic = {}
     for i in range(0,len(trends[0]['trends'])) :
         counter+=1
         trend = trends[0]['trends'][i]['name']
-        print("Search emojis for the trend : " + trend + "\n")
-        process_tweets(trend, date)
+        print("Searching emoji for the trend: ", trend)
+        emoj = process_tweets(trend, todayDate)
         print("\n")
+        trendDic[trend] = emoj
         if(counter == numberOfTrend):
-            return
+            return trendDic
+
+###### Write the tweet ######
+def write_tweet(trendDic):
+    space = "   - "
+    tweet="The most used emoji for each trend in France : \n"
+    for trend, emoj in trendDic.items():
+        tweet += space
+        tweet += trend + " : " + emoj
+        tweet += "\n"
+    return tweet
 
 #Connection
 auth = OAuthHandler(ckey, csecret)
@@ -73,11 +86,14 @@ api = tweepy.API(auth, wait_on_rate_limit=True)
 
 #WOEID
 FRANCE = "23424819"
+EU = "24865675"
 
 #Process
 now = datetime.datetime.now()
 todayDate = now.strftime("%Y-%m-%d")
 start_time = time.time()
-retrieve_trend(FRANCE, todayDate, 8)
+trendDic = retrieve_trend(EU, todayDate, 8)
+tweet = write_tweet(trendDic)
 scriptDuration = time.time() - start_time
 print(scriptDuration)
+print("\n"+tweet)
