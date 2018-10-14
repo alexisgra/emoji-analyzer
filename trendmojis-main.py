@@ -13,13 +13,15 @@ import time
 import json
 import emoji
 import datetime
+import database
 
-logs = open("logs.txt", "r") 
+with open('credentials.json', 'r') as f:
+    credentials = json.load(f)
 
-ckey=logs.readline()[:-1]
-csecret=logs.readline()[:-1]
-atoken=logs.readline()[:-1]
-asecret=logs.readline()
+ckey=credentials["twitter"]['ckey']
+csecret=credentials["twitter"]['csecret']
+atoken=credentials["twitter"]['atoken']
+asecret=credentials["twitter"]['asecret']
 
 ###### Authentification and connexion to the twitter API ######
 class listener(StreamListener):
