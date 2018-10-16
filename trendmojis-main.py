@@ -100,7 +100,7 @@ EU = "24865675"
 now = datetime.datetime.now()
 todayDate = now.strftime("%Y-%m-%d")
 start_time = time.time()
-trendDic = retrieve_trend(FRANCE, todayDate, 1)
+trendDic = retrieve_trend(FRANCE, todayDate, 8)
 tweet = write_tweet(trendDic)
 scriptDuration = time.time() - start_time
 print(scriptDuration)
