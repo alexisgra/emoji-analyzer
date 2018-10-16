@@ -48,7 +48,7 @@ def process_tweets(keyword, date):
 
 ###### Trends by country ######
 def retrieve_trend(location, todayDate, numberOfTrend):
-    trends = api.trends_place("610264")
+    trends = api.trends_place(location)
     counter = 0
     trendDic = {}
     for i in range(0,len(trends[0]['trends'])) :
@@ -100,9 +100,12 @@ EU = "24865675"
 now = datetime.datetime.now()
 todayDate = now.strftime("%Y-%m-%d")
 start_time = time.time()
-trendDic = retrieve_trend(EU, todayDate, 8)
+trendDic = retrieve_trend(FRANCE, todayDate, 1)
 tweet = write_tweet(trendDic)
 scriptDuration = time.time() - start_time
 print(scriptDuration)
+print("\n")
+print(now)
 print("\n"+tweet)
+
 publish_tweet(tweet)
