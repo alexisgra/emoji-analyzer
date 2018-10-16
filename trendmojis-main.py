@@ -15,14 +15,6 @@ import emoji
 import datetime
 import database
 
-with open('credentials.json', 'r') as f:
-    credentials = json.load(f)
-
-ckey=credentials["twitter"]['ckey']
-csecret=credentials["twitter"]['csecret']
-atoken=credentials["twitter"]['atoken']
-asecret=credentials["twitter"]['asecret']
-
 ###### Authentification and connexion to the twitter API ######
 class listener(StreamListener):
     def on_data(self, data):
@@ -79,6 +71,20 @@ def write_tweet(trendDic):
         tweet += "\n"
     return tweet
 
+###### publish the tweet ######
+def publish_tweet(tweet):
+    if len(tweet)<=240:
+        api.update_status(tweet)
+
+
+with open('credentials.json', 'r') as f:
+    credentials = json.load(f)
+
+ckey=credentials["twitter"]['ckey']
+csecret=credentials["twitter"]['csecret']
+atoken=credentials["twitter"]['atoken']
+asecret=credentials["twitter"]['asecret']
+
 #Connection
 auth = OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
@@ -99,3 +105,4 @@ tweet = write_tweet(trendDic)
 scriptDuration = time.time() - start_time
 print(scriptDuration)
 print("\n"+tweet)
+publish_tweet(tweet)

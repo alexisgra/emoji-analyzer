@@ -41,8 +41,8 @@ def insertData(table,data):
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     
-    attrib = "";
-    value = "";
+    attrib = ""
+    value = ""
     for attr in data.keys():
         attrib += attr+","
     attrib=attrib[:-1]
